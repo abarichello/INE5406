@@ -3,10 +3,9 @@ USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
 
 ENTITY reg_overflow IS
-GENERIC (n: INTEGER := 1);
 PORT (clk : IN STD_LOGIC;
-      d   : IN SIGNED(n-1 DOWNTO 0);
-      q   : OUT SIGNED(n-1 DOWNTO 0));
+      d   : IN STD_LOGIC;
+      q   : OUT STD_LOGIC);
 END reg_overflow;
 
 ARCHITECTURE bhv OF reg_overflow IS
