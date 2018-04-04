@@ -7,7 +7,7 @@ USE ieee.std_logic_signed.all;
 ENTITY adder IS
 PORT (a, b     : IN  SIGNED(15 DOWNTO 0);
       overflow : OUT STD_LOGIC;
-		s        : OUT SIGNED(15 DOWNTO 0));
+	  s        : OUT SIGNED(15 DOWNTO 0));
 END adder;
 
 ARCHITECTURE bhv OF adder IS
@@ -16,11 +16,12 @@ SIGNAL sum: SIGNED(16 DOWNTO 0);
 BEGIN
 	PROCESS(sum)
 	BEGIN
+		sum <= a + b;
 		IF sum(16) = '1' THEN
 			overflow <= '1';
 		ELSE
 			overflow <= '0';
-			s <= a + b;
+			s <= sum;
 		END IF;
 	END PROCESS;
 END bhv;
