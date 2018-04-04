@@ -1,0 +1,230 @@
+\documentclass[a4paper]{article} 
+\input{head}
+\begin{document}
+
+% TITLE SECTION
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=75mm]{logoDIREC.png}
+\end{figure}
+
+\fancyhead[C]{}
+\hrule \medskip % Upper rule
+\begin{minipage}{0.295\textwidth} 
+\raggedright
+\footnotesize
+
+Artur Barichello \hfill\\   
+Lucas Zacchi \hfill\\   
+Monique Bertan \hfill\\
+
+\end{minipage}
+\begin{minipage}{0.4\textwidth} 
+\centering 
+\large 
+Relatório 1\\ 
+\normalsize 
+Sistemas Digitais\\
+\end{minipage}
+\begin{minipage}{0.295\textwidth} 
+\raggedleft
+5 de abril de 2018\hfill\\
+\end{minipage}
+\medskip\hrule 
+\bigskip
+
+% CONTENTS
+%------------------------------------------------
+\section{\textbf{Descrição do problema}}
+%------------------------------------------------
+
+Descrever uma ULA para números negativos e positivos de 16 bits com os seguintes componentes:
+\begin{itemize}
+\item Dois registradores.
+\item Uma unidade para cálculo de complemento de 2.
+\item Um seletor para utilizar ou pular o uso do complemento de dois e outro seletor anterior ao registrador A.
+\item Um registrador de 1 bit para detecção de overflow.
+\item Um somador com detecção de overflow.
+\end{itemize}
+
+\smallskip
+
+%------------------------------------------------
+\section{\textbf{Descrição da elaboração do trabalho}}
+%-------------------------
+
+O projeto foi feito com uma arquitetura topo abrigando 6 componentes, 7 instanciações destes componentes e 8 sinais internos entre os blocos. 
+Componentes como registradores foram feitos da maneira genérica enquanto os seletores foram feitos do modo estrutural.
+\bigskip
+
+\textbf{Mux estrutural}
+\begin{lstlisting}[language=VHDL]
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.numeric_std.all;
+
+ENTITY mux2x1 IS
+GENERIC (n: INTEGER := 16);
+PORT (sel  : IN STD_LOGIC;
+      w, x : IN SIGNED(n-1 DOWNTO 0);
+	  m    : OUT SIGNED(n-1 DOWNTO 0));
+END mux2x1;
+
+ARCHITECTURE bhv OF mux2x1 IS
+BEGIN
+    m <= w WHEN sel = '0' ELSE x;
+end bhv;
+\end{lstlisting}
+\bigskip
+
+O registrador A é um registrador genérico normal enquanto o registrador B possui duas saídas de dados, uma que segue para o complemento de dois enquanto outra saída pula este componente.
+\bigskip
+
+\textbf{Registrador A genéricos de 16 bits:}
+\begin{lstlisting}[language=VHDL]
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.numeric_std.all;
+
+ENTITY register_a IS
+GENERIC (n: INTEGER := 16);
+PORT (clk : IN STD_LOGIC;
+      d   : IN SIGNED(n-1 DOWNTO 0);
+      q   : OUT SIGNED(n-1 DOWNTO 0));
+END register_a;
+
+ARCHITECTURE bhv OF register_a IS
+BEGIN
+    PROCESS(clk)
+    BEGIN
+        IF (RISING_EDGE(clk)) THEN
+			q <= d;
+        END IF;
+    END PROCESS;
+END bhv;
+\end{lstlisting}
+
+\pagebreak
+\textbf{Registrador B com saída para o seletor (números positivos)}
+\begin{lstlisting}[language=VHDL]
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.numeric_std.all;
+
+ENTITY register_b IS
+GENERIC (n: INTEGER := 16);
+PORT (clk     : IN STD_LOGIC;
+      d       : IN SIGNED(n-1 DOWNTO 0);
+      q       : OUT SIGNED(n-1 DOWNTO 0);
+		sel_out : OUT SIGNED(n-1 DOWNTO 0));
+END register_b;
+
+ARCHITECTURE bhv OF register_b IS
+BEGIN
+    PROCESS(clk)
+    BEGIN
+        IF (RISING_EDGE(clk)) THEN
+				q <= d;
+        END IF;
+    END PROCESS;
+END bhv;
+\end{lstlisting}
+\smallskip
+
+O módulo do complemento de dois utiliza o operator NOT do quartus que inverte todos os bits da entrada e passa para um sinal interno temporário. Este sinal é incrementado em um e depois é atribuido à saída.
+\bigskip
+
+\textbf{Módulo complemento de dois}
+\begin{lstlisting}[language=VHDL]
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.numeric_std.all;
+
+ENTITY comp2 IS
+GENERIC (n: INTEGER := 16);
+PORT (a_in  : IN SIGNED(n-1 DOWNTO 0);
+		s_out : OUT SIGNED(N-1 DOWNTO 0));
+END comp2;
+
+ARCHITECTURE bhv OF comp2 IS
+SIGNAL tmp : SIGNED(n-1 DOWNTO 0);
+
+BEGIN
+    tmp <= NOT a_in;
+	 s_out <= SIGNED(tmp + 1);
+end bhv;
+\end{lstlisting}
+\smallskip
+
+O adder de 16 bits com detecção de overflow foi projetado da seguinte maneira:
+É criado um sinal 'sum' com 1 bit a mais que os operandos (no caso 17), onde é feita a soma dos dois números de 16 bits. Se este novo bit à esquerda for 1 foi detectado que houve overflow e o sinal OUT 'overflow' é setado para 1.
+\bigskip
+
+\textbf{Adder com detecção de overflow}
+\begin{lstlisting}[language=VHDL]
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.numeric_std.all;
+USE ieee.std_logic_unsigned.all;
+USE ieee.std_logic_signed.all;
+
+ENTITY adder IS
+PORT (a, b     : IN  SIGNED(15 DOWNTO 0);
+      overflow : OUT STD_LOGIC;
+	  s        : OUT SIGNED(15 DOWNTO 0));
+END adder;
+
+ARCHITECTURE bhv OF adder IS
+SIGNAL sum: SIGNED(16 DOWNTO 0);
+
+BEGIN
+	PROCESS(sum)
+	BEGIN
+		sum <= a + b;
+		IF sum(16) = '1' THEN
+			overflow <= '1';
+		ELSE
+			overflow <= '0';
+			s <= sum;
+		END IF;
+	END PROCESS;
+END bhv;
+\end{lstlisting}
+\smallskip
+
+\bigskip
+
+%------------------------------------------------
+\section{\textbf{Testes}}
+%------------------------------------------------
+
+\smallskip
+
+%------------------------------------------------
+\section{\textbf{Resultados de atrasos e utilização da placa de cada módulo geral}}
+%------------------------------------------------
+
+\smallskip
+
+%------------------------------------------------
+\section{\textbf{Analise dos resultados}}
+%------------------------------------------------
+
+\smallskip
+
+%------------------------------------------------
+\section{\textbf{Arquivos VHDL e Estímulos}}
+%------------------------------------------------
+
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=90mm]{}
+% \caption{Arquivo VHDL \label{Figura 1}}
+% \end{figure}
+% \smallskip
+
+% END
+\bigskip
+
+\end{document}
