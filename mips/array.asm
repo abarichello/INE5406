@@ -3,6 +3,7 @@
 # $s3 = A[0]
 
 # A[12] = h + A[8]
+# Code example, not runnable
 
 main:
         lw      $t0, 32 ($s3)   # $t0 = A[8]
