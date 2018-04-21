@@ -13,55 +13,57 @@ ARCHITECTURE bhv OF arbitro IS
 	SIGNAL x		  : STD_LOGIC_VECTOR(2 DOWNTO 0);
 	
 	BEGIN
-		P1: PROCESS(clk, x)
+		x <= r;
+		
+		P1: PROCESS(clk, reset) -- CLOCK
 		BEGIN
-			IF reset = '0' then
+			IF reset = '1' then
 				cs <= E0;
-			ELSIF clk'EVENT AND clk = '1' THEn
+			ELSIF rising_edge(clk) THEN
 				cs <= ns;
 			END IF;
 		END PROCESS;
 		
-		P2: PROCESS(cs, x)
+		P2: PROCESS(cs, x) -- STATES
 		BEGIN
-			CASE CS IS
+			CASE cs IS
 				WHEN E0 =>
 					IF x = "000" THEN
-						NS <= E0;
+						ns <= E0;
 					ELSIF x(2) = '1' THEN
-						NS <= E1;
+						ns <= E1;
 					ELSIF x(2) = '0' AND x(1) = '1' THEN
-						NS <= E2;
+						ns <= E2;
 					ELSIF x = "001" THEN
-						NS <= E3;
+						ns <= E3;
 					END IF;
 					
 				WHEN E1 =>
 					IF x(2) = '0' THEN
-						NS <= E0;
+						ns <= E0;
 					ELSE
-						NS <= E1;
+						ns <= E1;
 					END IF;
 					
 				WHEN E2 =>
 					IF x(1) = '0' THEN
-						NS <= E0;
+						ns <= E0;
 					ELSE
-						NS <= E2;
+						ns <= E2;
 					END IF;
 					
 				WHEN E3 =>
 					IF x(0) = '0' THEN
-						NS <= E0;
+						ns <= E0;
 					ELSE
-						NS <= E3;
+						ns <= E3;
 					END IF;
 			END CASE;
 		END PROCESS;
 		
-		P3: PROCESS(CS) -- OUTPUTS
+		P3: PROCESS(cs) -- OUTPUTS
 		BEGIN
-			CASE CS IS
+			CASE cs IS
 				WHEN E0 =>
 					c <= "000";
 				WHEN E1 =>
