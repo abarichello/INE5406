@@ -12,7 +12,7 @@ ARCHITECTURE bhv OF total_register IS
 BEGIN
     PROCESS(clk)
     BEGIN
-        IF (reset = '0') THEN
+        IF (reset = '1') THEN
             q <= (OTHERS => '0');
         ELSIF (rising_edge(clk)) THEN
             IF (load = '1') THEN

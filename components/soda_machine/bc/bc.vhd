@@ -2,13 +2,13 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 
 ENTITY bc IS
-PORT (rst, clk, c, less   : IN STD_LOGIC;
-        d, total_c, total_r : OUT STD_LOGIC);
+PORT (clk, rst, c, less   : IN STD_LOGIC;
+      d, total_c, total_r : OUT STD_LOGIC);
 END bc;
 
 ARCHITECTURE bhv OF bc IS
     TYPE state_t IS (START, AWAIT, SUM, UNLOCK);
-    SIGNAL cs, ns: state_t; -- current state
+    SIGNAL cs, ns: state_t; -- current state / next state
 
     BEGIN
         P1: PROCESS (clk, rst) -- CLOCK
