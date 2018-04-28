@@ -16,12 +16,12 @@ SIGNAL localflow: STD_LOGIC;
 SIGNAL sumout: SIGNED(16 DOWNTO 0);
 
 BEGIN
-	locala <= RESIZE((a), 17);
-	localb <= RESIZE((b), 17);
-	sum <= locala + localb;
-	--overflow occurs when bit 16 is not equal to sign bit 15
-	localflow <= '1' when sum(15) /= sum(4);
-	sumout <= SIGNED(sum);
-	overflow <= localflow;
-	s <= sumout(16)&sum(14 DOWNTO 0); 
+    locala <= RESIZE((a), 17);
+    localb <= RESIZE((b), 17);
+    sum <= locala + localb;
+    --overflow occurs when bit 16 is not equal to sign bit 15
+    localflow <= '1' when sum(15) /= sum(4);
+    sumout <= SIGNED(sum);
+    overflow <= localflow;
+    s <= sumout(16)&sum(14 DOWNTO 0);
 END bhv;

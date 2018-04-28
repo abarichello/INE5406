@@ -13,7 +13,7 @@ BEGIN
     PROCESS(clk)
     BEGIN
         IF (RISING_EDGE(clk)) THEN
-				q <= d;
+                q <= d;
         END IF;
     END PROCESS;
 END bhv;
