@@ -32,7 +32,7 @@ ARCHITECTURE estrutura OF top IS
             s     : OUT SIGNED(31 DOWNTO 0));
     END COMPONENT;
 
-    SIGNAL saiULA : OUT SIGNED(31 DOWNTO 0);
+    SIGNAL saiULA, i_wData3, o_rReg1, o_rReg2 : SIGNED(31 DOWNTO 0);
 
 BEGIN
     i_wData3 <= loadValue WHEN load_en = '1' ELSE saiULA;
