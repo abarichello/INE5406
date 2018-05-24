@@ -11,7 +11,7 @@ END entity;
 ARCHITECTURE estrutura OF ULA_Control IS
 
 BEGIN
-    PROCESS(all) BEGIN
+    PROCESS(ulaOp, funct) BEGIN
         CASE ulaOp IS
             WHEN "00" =>
                 ulaControl <= "010";
