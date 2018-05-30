@@ -4,23 +4,25 @@
 *.vhd.bak
 
 # Quartus stuff
+*.qpf
+*.qsf
 *.asm.rpt
-*.bak 
-*.cdf 
-*.eda.rpt 
-*.flow 
-*.flow.rpt 
-*.ipinfo 
-*.jdi 
-*.map.rpt 
+*.bak
+*.cdf
+*.eda.rpt
+*.flow
+*.flow.rpt
+*.ipinfo
+*.jdi
+*.map.rpt
 *.map.summary
-*.pin 
-*.qdf 
-*.qsf.bak 
-*.qws 
-*.rpt 
-*.sld 
-*.smsg 
+*.pin
+*.qdf
+*.qsf.bak
+*.qws
+*.rpt
+*.sld
+*.smsg
 *.summary
 
 # Folders
