@@ -26,9 +26,10 @@
 *.summary
 
 # Folders
-*/db/
-*/hc_output/
-*/incremental_db/
-*/simulation/
+**/db/**
+**/hc_output/**
+**/incremental_db/**
+**/output_files/**
+**/simulation/**
 
 # Artur Barichello
